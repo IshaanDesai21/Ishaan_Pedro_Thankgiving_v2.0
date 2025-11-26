@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.draw;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -26,18 +24,16 @@ import org.firstinspires.ftc.teamcode.teleop.fsm.FSM;
 
 @TeleOp
 public class ASlingTele extends OpMode {
+
     private GamepadMapping controls;
     private FSM fsm;
     private Robot robot;
 
     private Follower follower;
-    private LocalizationMath localizationMath;
     public static Pose startingPose;
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
-
-
 
     @Override
     public void init() {
@@ -47,96 +43,98 @@ public class ASlingTele extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        //Pedro Localization
+        // Pedro Localization
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
+
+        // Set starting position
+        startingPose = new Pose(126, 118, Math.toRadians(36));
+        follower.setStartingPose(startingPose);
+
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
+
+        // Example path (for automated testing)
+        pathChain = () -> follower.pathBuilder()
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
-                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
+                .setHeadingInterpolation(
+                        HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
                 .build();
     }
 
-
     @Override
     public void start() {
-        // run once when we start
         robot.hardwareSoftReset();
         follower.startTeleopDrive(true);
     }
-
 
     @Override
     public void loop() {
         fsm.update();
         follower.update();
-        //Potential error with both?
+
         telemetryM.update();
-        telemetryM.update(telemetry);
         Pose pose = follower.getPose();
 
+        //----------------------------Telemetry----------------------------\\
+        telemetryM.debug("x:" + pose.getX());
+        telemetryM.debug("y:" + pose.getY());
+        telemetryM.debug("heading:" + Math.toDegrees(pose.getHeading()));
+        telemetryM.debug("total heading:" + Math.toDegrees(follower.getTotalHeading()));
 
+        double dist = LocalizationMath.getRedDistance(pose);
+        double headingErr = LocalizationMath.getRedHeadingError(pose);
 
-//----------------------------Telemetry and Dash Field Overlay----------------------------\\
+        telemetry.addData("Red Distance (in)", dist);
+        telemetry.addData("Red Heading Error (deg)", headingErr);
 
-        telemetryM.debug("x:" + follower.getPose().getX());
-        telemetryM.debug("y:" + follower.getPose().getY());
-        telemetryM.debug("heading:" + follower.getPose().getHeading());
-        telemetryM.debug("total heading:" + follower.getTotalHeading());
-
-        draw();
-
-        telemetry.addData("-----------------------", "");
-
-        //Limelight telemetry
-        telemetry.addData("limelight angle", Math.toDegrees(robot.limelight.getAngle()));
-        telemetry.addData("limelight nav", (robot.limelight.getLastNav()));
-        telemetry.addData("limelight obelisk", (robot.limelight.getObelisk().order));
-
-        telemetry.update();
-
-
-        //Dash field overlay and draw bot with Canvas
+        //----------------------------Dash Overlay----------------------------\\
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
         Drawing.drawRobot(packet.fieldOverlay(), pose);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
-//----------------------------Localization Math----------------------------\\
-
-
-        double dist = LocalizationMath.getRedDistance(pose);
-        double err  = LocalizationMath.getRedHeadingError(pose);
-
-        telemetry.addData("Red Distance (in)", dist);
-        telemetry.addData("Red Heading Error (deg)", err);
-//----------------------------Drive Controls----------------------------\\
-
-    //Robo Centric
+        //----------------------------Drive Controls----------------------------\\
         if (!automatedDrive) {
-            follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x,
-                    true // Robot Centric
-            );
+
+            // --- ALIGN TO RED GOAL ---
+            if (gamepad1.x) { // X button held
+                // Create a tiny path to rotate in place
+                PathChain alignPath = follower.pathBuilder()
+                        .addPath(new Path(new BezierLine(
+                                () -> pose,
+                                new Pose(pose.getX() + 0.00001, pose.getY()) // almost same position
+                        )))
+                        .setHeadingInterpolation(
+                                HeadingInterpolator.linearFromPoint(
+                                        follower::getHeading,
+                                        Math.toRadians(pose.getHeading()) + Math.toRadians(headingErr),
+                                        1.0
+                                )
+                        )
+                        .build();
+
+                follower.followPath(alignPath);
+            } else {
+                // Normal driver control
+                follower.setTeleOpDrive(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x,
+                        true // Robot-centric
+                );
+            }
         }
 
-        //Automated PathFollowing
+        // Automated path
         if (gamepad1.startWasPressed()) {
             follower.followPath(pathChain.get());
             automatedDrive = true;
         }
-        //Stop automated following if the follower is done
-        //PRESS B TO ESCAPE FROM PATH
+
+        // Stop automated path
         if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
             follower.startTeleopDrive(true);
             automatedDrive = false;
         }
-
-
-
     }
 }
-
