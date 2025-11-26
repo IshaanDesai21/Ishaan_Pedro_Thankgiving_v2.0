@@ -18,7 +18,6 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
 
 import org.firstinspires.ftc.teamcode.misc.gamepad.GamepadMapping;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.subsystems.robot.Robot;
 import org.firstinspires.ftc.teamcode.teleop.fsm.FSM;
 
@@ -90,7 +89,6 @@ public class ASlingTele extends OpMode {
         //----------------------------Dash Overlay----------------------------\\
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), pose);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
         //----------------------------Drive Controls----------------------------\\
