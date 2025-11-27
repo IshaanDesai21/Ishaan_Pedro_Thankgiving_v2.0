@@ -23,9 +23,12 @@ import java.util.function.Supplier;
 @TeleOp
 public class ARedTele extends OpMode {
 
+    /** @noinspection FieldCanBeLocal*/
     private GamepadMapping controls;
     private FSM fsm;
     private Robot robot;
+
+    
     private Follower follower;
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
