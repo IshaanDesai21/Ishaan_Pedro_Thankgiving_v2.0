@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.teleop.fsm.FSM;
 @TeleOp
 public class ASlingTele extends OpMode {
 
+    /** @noinspection FieldCanBeLocal*/
     private GamepadMapping controls;
     private FSM fsm;
     private Robot robot;
