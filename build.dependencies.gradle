@@ -2,8 +2,6 @@ repositories {
     mavenCentral()
     google() // Needed for androidx
     maven { url = "https://mymaven.bylazar.com/releases" }
-    //Added by Ishaan after Migration
-    maven { url = 'https://maven.brott.dev/' }
 }
 
 dependencies {
@@ -20,8 +18,5 @@ dependencies {
     implementation 'com.pedropathing:ftc:2.0.4'
     implementation 'com.pedropathing:telemetry:1.0.0'
     implementation 'com.bylazar:fullpanels:1.0.9'
-    //Added by Ishaan after migration
-    implementation 'com.acmerobotics.dashboard:dashboard:0.5.1'
-
 }
 

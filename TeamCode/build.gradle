@@ -12,8 +12,24 @@
 // Custom definitions may go here
 
 // Include common definitions from above.
+
+//Sloth addition 11/27/25
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://repo.dairy.foundation/releases"
+        }
+    }
+    dependencies {
+        classpath "dev.frozenmilk:Load:0.2.4"
+    }
+}
+
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+// there should be 2 or 3 more lines that start with 'apply plugin:' here
+apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -23,10 +39,26 @@ android {
     }
 }
 
+//Sloth addition 11/27/25
+repositories {
+    maven {
+        url = "https://repo.dairy.foundation/releases"
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
 
     implementation 'dev.nextftc:ftc:1.0.1'
-    implementation 'dev.nextftc:hardware:1.0.1' // If you would like to use the hardware module
+    implementation 'dev.nextftc:hardware:1.0.1'
     implementation 'dev.nextftc.extensions:pedro:1.0.0'
+
+    //Sloth addition 11/27/25
+    implementation("dev.frozenmilk.sinister:Sloth:0.2.4")
+    implementation("com.acmerobotics.slothboard:dashboard:0.2.4+0.4.17")
+
+
+    implementation("com.pedropathing:ftc:2.0.4") {
+        exclude group: "com.acmerobotics.dashboard"
+    }
 }
