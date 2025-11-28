@@ -87,6 +87,7 @@ public class ARedTele extends OpMode {
     // Heading lock -------------------------------------------------------------------
 
         // Auto-turn if not already turning if "a" is clicked
+        //IF A WAS PRESSED DOES NOT WORK, then just do a
         if (gamepad1.aWasPressed() && !autoTurn) {
             autoTurn = true;
             goalHeading = Math.atan2(144 - y, 144 - x);
@@ -98,7 +99,7 @@ public class ARedTele extends OpMode {
         boolean turnFinished = Math.abs(headingError) < Math.toRadians(2);
         //turns turn mode off if its in turn mode and the turn is finished
         if (autoTurn && turnFinished) {
-            //HOLDS THE POINT WHEN SHOOTING
+            //HOLDS THE POINT WHEN SHOOTING TODO - check if this works
             follower.holdPoint(follower.getPose());
             autoTurn = false;
         }
