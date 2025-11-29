@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.draw;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -58,10 +61,21 @@ public class ARedTele extends OpMode {
 
     }
 
+    /** This initializes the PoseUpdater, the mecanum drive motors, and the Panels telemetry. */
+    @Override
+    public void init_loop() {
+        telemetryM.debug("This will print your robot's position to telemetry while "
+                + "allowing robot control through a basic mecanum drive on gamepad 1.");
+        telemetryM.update(telemetry);
+        follower.update();
+        drawOnlyCurrent();
+    }
+
     @Override
     public void start() {
         robot.hardwareSoftReset();
         follower.startTeleopDrive(true);
+        follower.update();
     }
 
     @Override
@@ -71,6 +85,7 @@ public class ARedTele extends OpMode {
         follower.update();
         telemetryM.update();
         telemetry.update();
+        draw();
 
 
     //Robot pose from localization ---------------------------------------------------
