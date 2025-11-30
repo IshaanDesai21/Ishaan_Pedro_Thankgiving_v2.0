@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.draw;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
-
-import android.graphics.Point;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -97,21 +92,21 @@ public class ARedTele extends OpMode {
         double atBearing = Math.toRadians(cam.getATangle());
         double atDistance = cam.getATdist();
 
-        double distance = Math.sqrt(Math.pow((137 - pose.getX()), 2) + Math.pow((137 - pose.getY()), 2));
+        double distance = Math.sqrt(Math.pow((137 - x), 2) + Math.pow((137 - y), 2));
 
 
         if (gamepad1.x) {
-            follower.setPose(new Pose(pose.getX(),pose.getY(),Math.toRadians(0)));
+            follower.setPose(new Pose(x, y, Math.toRadians(0)));
         }
 
-        boolean driverBusy =
+        boolean controllerBusy =
                 Math.abs(gamepad1.left_stick_x) > 0.05
                 || Math.abs(gamepad1.left_stick_y) > 0.05
                 || Math.abs(gamepad1.right_stick_x) > 0.05;
 
         if (gamepad1.a && !autoTurnOdo) {
             autoTurnOdo = true;
-            goalHeading = Math.atan2(146 - y, 146 - x);
+            goalHeading = Math.atan2(137 - y, 137 - x);
         }
 
         if (gamepad1.dpad_down && !autoTurnVision) {
@@ -122,10 +117,9 @@ public class ARedTele extends OpMode {
         boolean odoTurnFinished = Math.abs(odoHeadingError) < Math.toRadians(3);
 
         double atHeadingError = angleWrap(atBearing);
-        boolean visionTurnFinished = Math.abs(atHeadingError) < Math.toRadians(0.4);
+        boolean visionTurnFinished = Math.abs(atHeadingError) < Math.toRadians(0.25);
 
-        if ((autoTurnOdo && odoTurnFinished) || (autoTurnVision && visionTurnFinished)
-                || gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
+        if ((autoTurnOdo && odoTurnFinished) || (autoTurnVision && visionTurnFinished) || controllerBusy) {
             autoTurnOdo = false;
             autoTurnVision = false;
         }
@@ -137,7 +131,7 @@ public class ARedTele extends OpMode {
         if (autoTurnOdo) {
             forward = 0;
             strafe = 0;
-            double Kp = 0.8;
+            double Kp = 1.5; //IF THIS DOESN'T WORK TRY 0.8
             rotate = odoHeadingError * Kp;
             double minPower = 0.11;
             if (Math.abs(rotate) < minPower && Math.abs(odoHeadingError) > Math.toRadians(0.5)) {
@@ -148,11 +142,12 @@ public class ARedTele extends OpMode {
             strafe = 0;
             double Kp = 0.95;
             rotate = atHeadingError * Kp;
-            double minPower = 0.11;
+            double minPower = 0.12;
+            //prevents robot from going min power when near the target
             if (Math.abs(rotate) < minPower && Math.abs(atHeadingError) > Math.toRadians(0.5)) {
                 rotate = Math.signum(rotate) * minPower;
             }
-            //follower.holdPoint(new Pose(pose.getX(),pose.getY(),pose.getHeading()));
+            //follower.holdPoint(new Pose(x, y, pose.getHeading()));
         } else {
             rotate = -gamepad1.right_stick_x;
         }
@@ -164,7 +159,7 @@ public class ARedTele extends OpMode {
             automatedDrive = true;
         }
 
-        if (automatedDrive && (driverBusy || !follower.isBusy())) {
+        if (automatedDrive && (controllerBusy || !follower.isBusy())) {
             //follower.breakFollowing();
             follower.startTeleopDrive();
             automatedDrive = false;
