@@ -55,13 +55,16 @@ public class Shooter {
         // TODO: update to RPM
         shootVel = Math.sqrt(H * g + g * Math.sqrt(Math.pow(R, 2) + Math.pow(H, 2)));
         // .096 is the diameter in m of the flywheel
-        power = convertVelToRPM(shootVel);
+        power = convertMPSToRPM(shootVel);
         return power;
     }
 
-    public static double convertVelToRPM(double vel) {
-        double newVel = (vel * 60) / .086 * Math.PI; // vel in RPM
-        return -newVel/6000;
+    public static double convertMPSToRPM(double mpsVel) {
+        double c = -1.79086;
+        double a = 20.10912;
+        double b = 0.000374598;
+        double lnArgument = 1.0 - ((mpsVel - c)/a);
+        return -Math.log(lnArgument)/b; // Math.log is natural logarithm
     }
 
     // HOOD ANGLE CALCULATIONS - TODO: ASK RUPAL
