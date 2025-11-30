@@ -39,6 +39,8 @@ public class ARedTele extends OpMode {
     private boolean autoTurnVision = false;
     private double goalHeading = 0;
 
+    public static double pinpointDistance = 0;
+
     @Override
     public void init() {
         controls = new GamepadMapping(gamepad1, gamepad2);
@@ -92,7 +94,7 @@ public class ARedTele extends OpMode {
         double atBearing = Math.toRadians(cam.getATangle());
         double atDistance = cam.getATdist();
 
-        double distance = Math.sqrt(Math.pow((137 - x), 2) + Math.pow((137 - y), 2));
+        double pinpointDistance = Math.sqrt(Math.pow((137 - x), 2) + Math.pow((137 - y), 2));
 
 
         if (gamepad1.x) {
@@ -167,7 +169,7 @@ public class ARedTele extends OpMode {
 
         telemetry.addData("pose", pose);
         telemetry.addData("Heading", heading);
-        telemetry.addData("Distance", distance);
+        telemetry.addData("Distance", pinpointDistance);
 
         telemetry.addData("AT angle", cam.getATangle());
         telemetry.addData("AT distance", cam.getATdist());

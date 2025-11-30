@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.teleop.ARedTele;
+
 public class Shooter {
     public final DcMotorEx outtake1;
     public final DcMotorEx outtake2;
@@ -39,24 +41,15 @@ public class Shooter {
     }
 
     //-----------------Math-----------------\\
-    private static final double launchHeight = .280; // meters
-    private static final double g = 9.81;
-    private static final double H = .39 - launchHeight; // y distance, m distance from launch height to a little above hole on goal
+    private static final double g = 9.793;
+    // y distance to goal - to the middle of the shooter
+    private static final double H = 0.360837;
     private static double shootVel;
-    private static double R; // TODO: update R with April Tag value
-
-    // Hardcoded distances from tip of triangle points to the middle of the goal (meters)
-    static double front_dist = 2.1844 ;
-    static double back_dist = 3.2004;
 
     public double calculateShooterVel() {
-        double convertedVel = 0;
-        double power = 0;
-        // TODO: update to RPM
+        double R = ARedTele.pinpointDistance;
         shootVel = Math.sqrt(H * g + g * Math.sqrt(Math.pow(R, 2) + Math.pow(H, 2)));
-        // .096 is the diameter in m of the flywheel
-        power = convertMPSToRPM(shootVel);
-        return power;
+        return convertMPSToRPM(shootVel);
     }
 
     public static double convertMPSToRPM(double mpsVel) {
@@ -67,12 +60,13 @@ public class Shooter {
         return -Math.log(lnArgument)/b; // Math.log is natural logarithm
     }
 
-    // HOOD ANGLE CALCULATIONS - TODO: ASK RUPAL
+    // HOOD ANGLE CALCULATIONS
     // ---------------------------------
     private static double hoodAngle;
 
     public double calculateHoodAngle() {
-        hoodAngle = Math.atan(Math.pow(Shooter.getShootVel(), 2)/(g * R)) / 2 * Math.PI;
+        double R = ARedTele.pinpointDistance;
+        hoodAngle = Math.atan(Math.pow(calculateShooterVel(), 2)/(g * R));
         return hoodAngle;
     }
 
