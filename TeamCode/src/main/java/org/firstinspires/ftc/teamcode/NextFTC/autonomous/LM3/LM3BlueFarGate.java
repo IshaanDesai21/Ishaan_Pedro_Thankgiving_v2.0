@@ -3,19 +3,14 @@ package org.firstinspires.ftc.teamcode.NextFTC.autonomous.LM3;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.HeadingInterpolator;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Intakenf;
-import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Loginf;
 import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Shooternf;
 import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Transfernf;
 import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Hoodnf;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.util.function.Supplier;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -27,41 +22,40 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "12 Red Close Gate")
-public class LM3RedCloseGate12 extends NextFTCOpMode {
-    public LM3RedCloseGate12() {
+@Autonomous(name = "12 Blue Far Side Gate")
+public class LM3BlueFarGate extends NextFTCOpMode {
+    public LM3BlueFarGate() {
         addComponents(
                 new SubsystemComponent(
                         Intakenf.INSTANCE, Hoodnf.INSTANCE,
                         Shooternf.INSTANCE, Transfernf.INSTANCE
-                        //Loginf.INSTANCE
                 ),
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE
         );
     }
 
+
     public PathChain scorePreloads;
     public PathChain grabSet2;
-    public PathChain hitGate;
+    public PathChain gate;
     public PathChain scoreSet2;
     public PathChain grabSet3;
     public PathChain scoreSet3;
-    public PathChain grabSet4;
-    public PathChain scoreSet4;
+    public PathChain prepareHp;
+    public PathChain backOutHp;
+    public PathChain grabHp;
+    public PathChain scoreHp;
     public PathChain park;
-
-    public Pose scorePose = new Pose(86,86);
+    Pose scorePose = new Pose(56,17);
 
     public void buildPaths() {
-        PedroComponent.follower().setStartingPose(new Pose(126.2, 119, Math.toRadians(36)));
-
         scorePreloads = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(126.2, 119.000), scorePose)
+                        new BezierLine(new Pose(56.000, 8.000), scorePose)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(36), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(110))
                 .build();
 
         grabSet2 = PedroComponent.follower()
@@ -69,31 +63,35 @@ public class LM3RedCloseGate12 extends NextFTCOpMode {
                 .addPath(
                         new BezierCurve(
                                 scorePose,
-                                new Pose(92.292, 77),
-                                new Pose(126.5, 83.4)
+                                new Pose(60.000, 67.500),
+                                new Pose(8.500, 58.500)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(110), Math.toRadians(180))
                 .build();
 
-        hitGate = PedroComponent.follower()
+        gate = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(126.5, 83.4),
-                                new Pose(112, 77.000),
-                                new Pose(130, 71.000)
+                                new Pose(8.500, 58.500),
+                                new Pose(42.000, 55.000),
+                                new Pose(16.000, 67.750)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                 .build();
 
         scoreSet2 = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(130, 71.000), scorePose)
+                        new BezierCurve(
+                                new Pose(16.000, 67.750),
+                                new Pose(59.000, 60.500),
+                                scorePose
+                        )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(110))
                 .build();
 
         grabSet3 = PedroComponent.follower()
@@ -101,64 +99,66 @@ public class LM3RedCloseGate12 extends NextFTCOpMode {
                 .addPath(
                         new BezierCurve(
                                 scorePose,
-                                new Pose(87.760, 55),
-                                new Pose(79.313, 57),
-                                new Pose(133, 54)
+                                new Pose(54.250, 40.000),
+                                new Pose(8.500, 36.000)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(110), Math.toRadians(180))
                 .build();
 
         scoreSet3 = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                new Pose(133, 54),
-                                new Pose(91.262, 56.240),
-                                new Pose(95.176, 82.815),
-                                scorePose
-                        )
+                        new BezierLine(new Pose(8.500, 36.000), scorePose)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
                 .build();
 
-
-        grabSet4 = PedroComponent.follower()
+        prepareHp = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                scorePose,
-                                new Pose(88, 39),
-                                new Pose(82, 31),
-                                new Pose(132, 35)
-                        )
+                        new BezierLine(scorePose, new Pose(8.500, 36.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(110), Math.toRadians(180))
                 .build();
 
-        scoreSet4 = PedroComponent.follower()
+        backOutHp = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(132, 35), new Pose(90, 110))
+                        new BezierLine(new Pose(8.500, 36.000), new Pose(10.000, 36.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(30))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(260))
+                .build();
+
+        grabHp = PedroComponent.follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(10.000, 36.000), new Pose(10.000, 11.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(260), Math.toRadians(260))
+                .build();
+
+        scoreHp = PedroComponent.follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(10.000, 11.000), scorePose)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(260), Math.toRadians(110))
                 .build();
 
         park = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(90, 110), new Pose(115.000, 70.000))
+                        new BezierLine(scorePose, new Pose(119, 70))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(270))
+                .setLinearHeadingInterpolation(Math.toRadians(110), Math.toRadians(90))
                 .build();
-
-
     }
 
 
     private Command init_bot() {
         return new SequentialGroup(
-                Hoodnf.INSTANCE.setHoodPos(0.42)
+                Hoodnf.INSTANCE.setHoodPos(0.34)
         );
 
     }
@@ -173,7 +173,7 @@ public class LM3RedCloseGate12 extends NextFTCOpMode {
     private Command baseState() {
         return new ParallelGroup(
                 Transfernf.INSTANCE.hotdog(),
-                Hoodnf.INSTANCE.setHoodPos(0.42)
+                Hoodnf.INSTANCE.setHoodPos(0.3)
         );
     }
 
@@ -190,10 +190,10 @@ public class LM3RedCloseGate12 extends NextFTCOpMode {
                                 new FollowPath(scorePreloads, true),
 
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1255)
+                                Shooternf.INSTANCE.setShooterVel(-1500)
                         ),
                         //Spin up time
-                        new Delay(0.3),
+                        new Delay(0.4),
                         //ATalign(),
                         transferUpFor(2.2),
 
@@ -202,64 +202,46 @@ public class LM3RedCloseGate12 extends NextFTCOpMode {
                         new ParallelGroup(
                                 new SequentialGroup(
                                         new FollowPath(grabSet2),
-
-                                        //gate
-                                        new FollowPath(hitGate),
-                                        new Delay(0.7),
-                                        new FollowPath(scoreSet2)
+                                        new FollowPath(scoreSet2, true)
                                 ),
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1255)
+                                Shooternf.INSTANCE.setShooterVel(-1500)
                         ),
                         new Delay(0.2),
-                        transferUpFor(2.5),
-
-
+                        transferUpFor(2.6),
 
                         //SET 3
                         new ParallelGroup(
                                 new SequentialGroup(
-                                        new FollowPath(grabSet3),
-                                        new FollowPath(scoreSet3, true)
+                                        new FollowPath(grabSet2),
+                                        new FollowPath(scoreSet2, true)
                                 ),
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1255)
+                                Shooternf.INSTANCE.setShooterVel(-1500)
                         ),
                         new Delay(0.2),
-                        transferUpFor(2.5),
+                        transferUpFor(2.6),
 
-
-
-                        //SET 4
+                        //SET 4 Human Player
                         new ParallelGroup(
                                 new SequentialGroup(
-                                        new FollowPath(grabSet4),
-                                        new FollowPath(scoreSet4, true)
+                                        new FollowPath(prepareHp),
+                                        new FollowPath(backOutHp),
+                                        new FollowPath(scoreHp, true)
                                 ),
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1190)
-
-
+                                Shooternf.INSTANCE.setShooterVel(-1500)
                         ),
-                        transferUpFor(2.5)
-                        //new FollowPath(park)
+                        new Delay(0.2),
+                        transferUpFor(4)
+
+
 
 
                 )
         );
     }
-    private Command transferLastSet() {
-        return new ParallelGroup(
-                Transfernf.INSTANCE.on(),
-                new Delay(2.2)
-        );
-    }
 
-    private Command park_bot() {
-        return new ParallelGroup(
-                new FollowPath(park)
-        );
-    }
 
 
     @Override
@@ -272,11 +254,7 @@ public class LM3RedCloseGate12 extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         autonomous().schedule();
-        if (autonomous().isDone()) {
-            transferLastSet().schedule();
-        }
 
-        //park_bot().schedule();
         Shooternf.INSTANCE.enable();
     }
 }

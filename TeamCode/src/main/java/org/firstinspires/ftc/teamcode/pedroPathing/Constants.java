@@ -33,11 +33,10 @@ public class Constants {
 
 //DRIVE
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.83,0.0,0.02,0.6,0.0))
-            //TODO - take out if pathing gets jank
-            .useSecondaryDrivePIDF(true)
-            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.1,0,0.01,0.6,0.01))
+//            .useSecondaryDrivePIDF(true)
+//            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.1,0,0.01,0.6,0.01))
             ;
-    public static PathConstraints pathConstraints = new PathConstraints(0.995, 50, 1.4, 2.0);
+    public static PathConstraints pathConstraints = new PathConstraints(0.992, 50, 1.4, 1.8);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)

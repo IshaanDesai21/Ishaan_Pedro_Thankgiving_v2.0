@@ -12,8 +12,12 @@ public class Hoodnf implements Subsystem {
     private final ServoEx variableHood = new ServoEx("variableHood");
 
     public Command closeSide() {
-        return new SetPosition(variableHood, 0.67).requires(this);
+        return new SetPosition(variableHood, 0.2).requires(this);
     }
+    public Command closeLastSet() {
+        return new SetPosition(variableHood, 0.61).requires(this);
+    }
+
     public Command farSide() {
         return new SetPosition(variableHood, 0.42).requires(this);
     }
