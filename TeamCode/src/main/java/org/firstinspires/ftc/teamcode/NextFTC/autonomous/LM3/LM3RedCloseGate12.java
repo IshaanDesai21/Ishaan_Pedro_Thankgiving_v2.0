@@ -215,18 +215,17 @@ public class LM3RedCloseGate12 extends NextFTCOpMode {
                         new Delay(0.2),
                         transferUpFor(2.5),
 
-
-
-                    new ParallelGroup(
-                            new SequentialGroup(
-                                    new FollowPath(grabSet4),
-                                    new FollowPath(scoreSet4, true)
-                            ),
-                            baseState(),
-                            Shooternf.INSTANCE.setShooterVel(-1200)
-                    ),
-                            new Delay(0.2),
-                            transferUpFor(2.5)
+                        //SET 4
+                        new ParallelGroup(
+                                new SequentialGroup(
+                                        new FollowPath(grabSet4),
+                                        new FollowPath(scoreSet4, true)
+                                ),
+                                baseState(),
+                                Shooternf.INSTANCE.setShooterVel(-1200)
+                        ),
+                        new Delay(0.2),
+                        transferUpFor(2.5)
 
 
                 )
