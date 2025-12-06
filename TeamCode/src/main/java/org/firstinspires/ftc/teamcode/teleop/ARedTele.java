@@ -34,12 +34,12 @@ public class ARedTele extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private boolean autoTurn = false;
     private boolean autoTurnOdo = false;
     private boolean autoTurnVision = false;
     private double goalHeading = 0;
 
     public static double pinpointDistance = 0;
+    public static Pose pose;
 
     @Override
     public void init() {
@@ -49,7 +49,7 @@ public class ARedTele extends OpMode {
         fsm = new FSM(hardwareMap, controls, robot);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(126, 118, Math.toRadians(36)));
+        pose = follower.getPose();
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 

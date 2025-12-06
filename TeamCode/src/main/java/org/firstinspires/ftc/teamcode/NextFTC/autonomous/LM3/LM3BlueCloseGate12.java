@@ -44,6 +44,7 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
     public PathChain scoreSet3;
     public PathChain grabSet4;
     public PathChain scoreSet4;
+    public PathChain park;
 
 
     private double mx(double x) { return 144 - x; }
@@ -55,13 +56,12 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
         return 180 - deg;
     }
 
-    public Pose scorePose = new Pose(mx(56), 88);
+    public Pose scorePose = new Pose(56, 88);
 
     public void buildPaths() {
 
-        PedroComponent.follower().setStartingPose(
-                new Pose(mx(126.2), 119, Math.toRadians(mh(36)))
-        );
+        PedroComponent.follower().setStartingPose(new Pose(mx(126.2), 119, Math.toRadians(144)));
+
 
         // ——— PRELOADS ———
         scorePreloads = PedroComponent.follower()
@@ -72,7 +72,7 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
                                 scorePose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(mh(36)), Math.toRadians(mh(45)))
+                .setLinearHeadingInterpolation(Math.toRadians(144), Math.toRadians(mh(44)))
                 .build();
 
         // ——— GRAB SET 2 ———
@@ -85,7 +85,7 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
                                 new Pose(mx(126.5), 83.4)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(mh(45)), Math.toRadians(mh(0)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(44)), Math.toRadians(mh(0)))
                 .build();
 
         // ——— HIT GATE ———
@@ -110,7 +110,7 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
                                 scorePose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(mh(90)), Math.toRadians(mh(45)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(90)), Math.toRadians(mh(44)))
                 .build();
 
         // ——— GRAB SET 3 ———
@@ -124,7 +124,7 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
                                 new Pose(mx(133), 54)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(mh(45)), Math.toRadians(mh(0)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(44)), Math.toRadians(mh(0)))
                 .build();
 
         // ——— SCORE SET 3 ———
@@ -138,10 +138,9 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
                                 scorePose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(45)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(44)))
                 .build();
 
-        // ——— GRAB SET 4 ———
         grabSet4 = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
@@ -155,23 +154,36 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(mh(45)), Math.toRadians(mh(0)))
                 .build();
 
-        // ——— SCORE SET 4 ———
         scoreSet4 = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(
-                                new Pose(mx(132), 35),
-                                new Pose(mx(90), 110)
-                        )
+                        new BezierLine(new Pose(mx(132), 35), scorePose)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(30)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(45)))
+                .build();
+
+        scoreSet4 = PedroComponent.follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(mx(132), 35), scorePose)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(45)))
+                .build();
+
+        park = PedroComponent.follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(mx(88.000), 88.000), new Pose(mx(115.000), 70.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(mh(44)), Math.toRadians(mh(90)))
                 .build();
 
     }
 
     private Command init_bot() {
         return new SequentialGroup(
-                Hoodnf.INSTANCE.setHoodPos(0.42)
+                //higher the number, the
+                Hoodnf.INSTANCE.setHoodPos(0.3)
         );
     }
 
@@ -185,7 +197,7 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
     private Command baseState() {
         return new ParallelGroup(
                 Transfernf.INSTANCE.hotdog(),
-                Hoodnf.INSTANCE.setHoodPos(0.42)
+                Hoodnf.INSTANCE.setHoodPos(0.3)
         );
     }
 
@@ -230,16 +242,25 @@ public class LM3BlueCloseGate12 extends NextFTCOpMode {
                         new Delay(0.2),
                         transferUpFor(2.5),
 
-                        // SET 4
+                        //SET 4
                         new ParallelGroup(
                                 new SequentialGroup(
                                         new FollowPath(grabSet4),
                                         new FollowPath(scoreSet4, true)
                                 ),
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1190)
+                                Shooternf.INSTANCE.setShooterVel(-1200)
                         ),
-                        transferUpFor(2.5)
+                        new Delay(0.2),
+                        transferUpFor(2.4),
+                        new FollowPath(park)
+                        //transferUpFor(2.5)
+//                        new ParallelGroup(
+//                                transferUpFor(3),
+//                                Transfernf.INSTANCE.on()
+//                        ),
+//                        new FollowPath(park)
+
                 )
         );
     }

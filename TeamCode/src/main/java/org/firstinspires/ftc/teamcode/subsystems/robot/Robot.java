@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.subsystems.vision.PythonLimelight;
+import org.firstinspires.ftc.teamcode.subsystems.vision.logi;
 
 public class Robot {
     // CONFIG
@@ -36,7 +37,9 @@ public class Robot {
 
     public GamepadMapping controls;
 
-    public PythonLimelight limelight;
+    public static logi cam;
+
+    //public PythonLimelight limelight;
 
     public Robot(HardwareMap hardwareMap, GamepadMapping controls) {
         this.controls = controls;
@@ -53,6 +56,8 @@ public class Robot {
         intake = new Intake(hardwareMap);
         transfer = new Transfer(hardwareMap);
         shooter = new Shooter(hardwareMap);
+
+        cam = new logi(hardwareMap);
 
         //ISHAAN TOOK THIS OUT SO THE REVERSING MOTORS DOES NOT CLASH WITH THE RR MOTORS
         drivetrain = new Drivetrain(hardwareMap, imu, controls);

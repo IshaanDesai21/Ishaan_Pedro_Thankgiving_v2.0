@@ -21,7 +21,7 @@ public class IshaanFSM {
     private final Intake intake;
     private final Transfer transfer;
     private final Shooter shooter;
-    private final PythonLimelight limelight;
+    //private final PythonLimelight limelight;
 
     public IshaanFSM(HardwareMap hardwareMap, GamepadMapping gamepad, Robot robot) {
         this.robot = robot;
@@ -30,7 +30,7 @@ public class IshaanFSM {
         intake = robot.intake;
         transfer = robot.transfer;
         shooter = robot.shooter;
-        limelight = robot.limelight;
+        //limelight = robot.limelight;
     }
 
     public void update() {

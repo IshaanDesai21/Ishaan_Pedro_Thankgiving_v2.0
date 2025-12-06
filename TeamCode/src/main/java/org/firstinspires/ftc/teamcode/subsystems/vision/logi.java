@@ -24,7 +24,7 @@ public class logi {
 
     final double ATsize = 6.5;
     final double theta = Math.toRadians(45.2189284116);
-    final double[] resolution = new double[]{640, 480};
+    final double[] resolution = new double[]{1920, 1080};
 
     public logi(HardwareMap hw) {
         apriltagPipeline = new AprilTagProcessor.Builder()
@@ -45,7 +45,7 @@ public class logi {
                 .setCameraResolution(new Size(1920, 1080))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .setAutoStopLiveView(true)
-                .enableLiveView(true)
+                
                 .build();
 
         portal.setProcessorEnabled(apriltagPipeline, true);

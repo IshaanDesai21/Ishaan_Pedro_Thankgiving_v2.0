@@ -18,8 +18,9 @@ public class Shooternf implements Subsystem {
     public MotorEx outtake1, outtake2;
     public MotorGroup shooter;
 
+
     private final ControlSystem shooterController = ControlSystem.builder()
-            .velPid(0.4,0,0.001)
+            .velPid(0.32,0,0.001)
             .build();
 
     private boolean enabled = false;
