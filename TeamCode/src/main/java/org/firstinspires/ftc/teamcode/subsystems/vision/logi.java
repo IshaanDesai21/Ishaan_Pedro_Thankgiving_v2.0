@@ -44,7 +44,7 @@ public class logi {
                 .setCameraResolution(new Size(1920, 1080))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .setAutoStopLiveView(true)
-                .enableLiveView(true)
+                
                 .build();
 
         portal.setProcessorEnabled(apriltagPipeline, true);
